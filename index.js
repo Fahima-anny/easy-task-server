@@ -72,6 +72,20 @@ async function run() {
         res.send(result) ;
     })
 
+    app.put("/tasks/:id", async (req, res) => {
+        const id = req.params.id ;
+        const editedTaskInfo = req.body ;
+        const query = {_id : new ObjectId(id)} ;
+        const updatedDoc = {
+            $set: {
+title: editedTaskInfo.title,
+description: editedTaskInfo.description
+            }
+        }
+        const result = await tasksCollection.updateOne(query,updatedDoc) ;
+        res.send(result) ;
+    })
+
 
     await client.connect();
     // Send a ping to confirm a successful connection
