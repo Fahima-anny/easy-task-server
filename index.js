@@ -3,7 +3,7 @@ const cors = require('cors');
 require('dotenv').config() ;
 const app = express() ;
 const port = process.env.PORT || 5000 ;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
 // middleware 
@@ -31,6 +31,8 @@ async function run() {
     const usersCollection = client.db("easyTaskDB").collection("users");
     const tasksCollection = client.db("easyTaskDB").collection("tasks");
 
+
+    // all users here 
     app.post("/users", async (req, res) => {
         const userInfo = req.body ;
         console.log(userInfo);
@@ -46,10 +48,27 @@ async function run() {
         res.send(result) ;
     })
 
+
+    // all tasks here 
     app.post("/tasks", async (req, res) => {
         const taskInfo = req.body ;
         console.log(taskInfo);
         const result = await tasksCollection.insertOne(taskInfo) ;
+        res.send(result) ;
+    })
+
+    app.get("/tasks", async (req, res) => {
+        const email = req.query.email ;
+        const query = {userEmail : email} ;
+        const result = await tasksCollection.find(query).toArray() ;
+        res.send(result) ;
+    })
+
+    app.delete("/tasks/:id", async (req, res) => {
+        const id = req.params.id ;
+        // const 
+        const filter = {_id : new ObjectId(id)} ;
+        const result = await tasksCollection.deleteOne(filter) ;
         res.send(result) ;
     })
 
